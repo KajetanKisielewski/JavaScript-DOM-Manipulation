@@ -57,22 +57,38 @@ for(let i=0; i<list.length; i++) {
         const li = document.createElement('li');
         li.dataset.id = list[i].id;
 
-        const a = document.createElement('a');
-        a.setAttribute('href' , list[i].link);
-        a.textContent = list[i].text;
+        const a = document.createElement('a')
+        a.setAttribute('href' , list[i].link)
+        a.textContent = list[i].text
 
         li.appendChild(a);
         ul.appendChild(li);
     }
-    else {
-        console.log(li ,  list[i].parentId ) ;
-        if( li.dataset.id === list[i].parentId ) {
-            console.log('abc')
-        }
-    }
 }
 section.appendChild(ul);
 
+
 const liList = document.querySelectorAll('li');
 
+liList.forEach( function(element) {
 
+    const id = Number(element.dataset.id);
+
+    const children = list.filter( function (element) {
+        return element.parentId === id
+    });
+
+    for(let i=0; i<children.length; i++) {
+
+            const ul = document.createElement('ul');
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+
+            a.setAttribute('href' , children[i].link);
+            a.textContent = children[i].text;
+
+            li.appendChild(a);
+            ul.appendChild(li);
+            element.appendChild(ul);
+    }
+})
