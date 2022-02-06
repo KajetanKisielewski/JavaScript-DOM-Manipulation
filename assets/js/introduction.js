@@ -9,7 +9,7 @@ tooltipList.forEach( function(element) {
     const span = document.createElement('span')
     span.classList.add('tooltip__box')
 
-    if(element.dataset.tooltipType === 'text' ) {
+    if(element.dataset.tooltipType === 'text') {
         span.classList.add('tooltip__box--text');
         span.textContent = element.dataset.tooltipContent;
     }

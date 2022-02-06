@@ -1,218 +1,177 @@
-# JavaScript: Elementy DOM
+# JavaScript - DOM manipulation
 
-Będziemy musieli utworzyć nowe elementy w drzewie DOM, dodać do wybranych elementów odpowienie klasy, atrybutu czy zawartość i oczywiście wyszukać odpowiedniej miejsca, w których będziemy wykonywać modyfikacje.
+- [Overview](#overview)
+  - [The challenge](#the-challenge)
+  - [Solutions](#solutions)
+    - [Solution to the first problem](#solution-to-the-first-problem)
+    - [Solution to the second problem](#solution-to-the-second-problem)
+  - [Links](#links)
+- [My process](#my-process)
+  - [Built with](#built-with)
+  - [What I Learned](#what-i-learned)
+- [Author](#author)
+- [Special thanks](#special-thanks)
 
-## Jaki mamy problem do rozwiązania?
 
-Otrzymaliśmy gotowy kod HTML oraz CSS niestety nie możemy go modyfikować. Wszystko co robimy musi zostać wykonane z poziomu kodu JS. 
+## Overview
 
-Zleceniodawca nie chce nam powiedzieć dlaczego tak jest. Godzimy się na jego warunki ponieważ chcemy zdobyć komercyjne doświadczenie!
+### The challenge
 
-### Problem 1: Wygenerowanie linków z *tooltip-em* po najechaniu kursorem myszy
+This project was created to prove my skills in JavaScript DOM manipulation.
+The task consisted in creating new elements in the DOM tree, adding appropriate classes, attributes or contents to the selected elements, and searching for the appropriate places where we would make modifications. In this task I couldn't change content in HTML and CSS files. My job was to solve two problems using JavaScript:
 
-> *Tooltip* to taki dymek pojawiający się w okolicy elementu po kliknięciu lub najechaniu na niego, posiadający dodatkową informację. Przykład możemy zobaczyć [tutaj](https://www.w3schools.com/css/tryit.asp?filename=trycss_tooltip).
+1. Generating links with a tooltip after hovering the cursor over an element(text and image).
+2. Generating a table of contents based on an array of objects.
 
-> Problem rozwiązujemy w pliku `./assets/js/introduce.js`
+### Solutions
 
-Musimy zmodyfikować element o klasie `.tooltip` w taki sposób, aby generował on prawidlową strukturę zgodną z CSS. Obecnie ten element wygląda w taki sposób:
+#### Solution to the first problem
 
-```html
-<span 
+Having the following structure, we need to modify the element with the .tooltip class in such a way that it generates the correct structure compliant with CSS:
+
+````html
+<span
     class="tooltip"
-    data-url="https://pl.wikipedia.org/wiki/J%C4%99zyk_skryptowy" 
+    data-url="https://pl.wikipedia.org/wiki/J%C4%99zyk_skryptowy"
     data-tooltip-type="text"
     data-tooltip-content="Język skryptowy (ang. script language) – język programowania obsługujący skrypty[1]. Często służący do kontrolowania określonej aplikacji."
 >
     skryptowy
 </span>
-```
+````
 
-Posiada mnóstwo informacji. Nam zależy na tym, aby wykorzystać te informacje w taki, aby utworzyć taką zawartość:
-
-```html
-<a href="https://pl.wikipedia.org/wiki/J%C4%99zyk_skryptowy">
-    skryptowy
-</a>
-<span class="tooltip__box tooltip__box--text">
-    Język skryptowy (ang. script language) – język programowania obsługujący skrypty[1]. Często służący do kontrolowania określonej aplikacji.
-</span>
-
-```
-
-Czyli zawartośc tego elementu tj. tekst `skryptowy` zamienić (nadpisać) na dwa znaczniki (ang. *tags*). Należy zwrócić uwagę, że pierwszy z nich tj `<a/>` zwiera tekst, który znajdował się w elemencie o klasie `.tooltip`. 
-
-Aby rozwiązać ten problem musimy dla każdego elementu (`.queyrSelectorAll()` i pętla `for` lub `.forEach`), który zawiera te dane (tj. `.tooltip`) utworzyć dwa znaczniki tj. `<a/>` oraz `<span/>` z odpowiednimi klasami i zawartością. Następnie te elementy dodać do `.tooltip` jako kolejne dzieci tego elementu.
-
-Odpowiednią zawartość możemy pobrać z `dataset`, który posiada dane typu adres dla link-u => `.dataset.url`, typ tooltip-u => `.dataset.tooltipType` oraz jego zawartość => `.dataset.tooltipContent`.
-
-Tutaj należy zwrócić uwagę, że mamy różne typy *tooltip-ów*. Może to być *tooltip* tekstowy (`text`) oraz obrazkowy (`image`).
-
-Jeśli *tooltip* jest typem obrazkowym musi zawierać inną strukturę. Podobną do tej:
-
-```html
-<a href="https://pl.wikipedia.org/wiki/Strona_internetowa">
-    stronach internetowych
-</a>
-<span class="tooltip__box tooltip__box--image">
-    <img class="tooltip__image" 
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Firefox_57.0.png/640px-Firefox_57.0.png">
-</span>
-```
-
-Jeśli wykonamy prawidłowo podmianę struktury to po najechaniu kursorem na `.tooltip` powinna się pojawić dodatkowa informacje przy najechanym elemencie:
-
-![](assets/img/example1.png)
+The solution I chose was to create two children, i.e. `<a>` and `<span>`, with the appropriate attributes and content for a .tooltip element, and then add them to .tooltip. note that we have different types of tooltips. It can be a text or a picture tooltip.
 
 
-W zależności od typu *tooltip-u* może ona troszkę inaczej wyglądać.
+Example of a solution for a text type tooltip:
+````js
+const tooltipList = document.querySelectorAll('.tooltip')
 
-### Problem 2: Wygenerowanie spisu treści na podstawie tablicy obiektów.
+tooltipList.forEach( function(element) {
 
-> Problem rozwiązujemy w pliku `./assets/js/list.js`.
+    const a = document.createElement('a')
+    a.setAttribute('href' , element.dataset.url);
+    a.textContent = element.textContent;
 
-Otrzymaliśmy od Klienta spis treści w formie tablicy obiektów.
+    const span = document.createElement('span')
+    span.classList.add('tooltip__box')
 
-```javascript
-const list = [
-    {
-        id: 1,
-        parentId: null,
-        text: 'Zastosowanie',
-        link: '#Zastosowanie',
-    },
-    {
-        id: 44,
-        parentId: null,
-        text: 'Historia',
-        link: '#Historia',
-    },
-    {
-        id: 7,
-        parentId: 44,
-        text: 'Dialekty',
-        link: '#Dialekty',
-    },
-    {
-        id: 31,
-        parentId: 44,
-        text: 'Java',
-        link: '#Java',
-    },
-    {
-        id: 24,
-        parentId: null,
-        text: 'JavaScript dla WWW',
-        link: '#JavaScript_dla_WWW',
-
-    },
-    {
-        id: 10,
-        parentId: 24,
-        text: 'Interakcja',
-        link: '#Interakcja'
-    },
-    {
-        id: 25,
-        parentId: 24,
-        text: 'Osadzanie',
-        link: '#Osadzanie',
+    if(element.dataset.tooltipType === 'text') {
+        span.classList.add('tooltip__box--text');
+        span.textContent = element.dataset.tooltipContent;
     }
-];
-```
 
-Klient zaznaczył, że ta tablica może ulegać modyfikacji i nasze rozwiązanie musi być na tyle elastyczne, aby zmiana zawartości tej tablicy nie powodowała problemów z generowaniem spisu treści.
+    element.textContent = "";
+    element.appendChild(a);
+    element.appendChild(span);
+})
+````
 
-Wspomniana tablica zawiera obiekty z odpowiednimi danymi:
+#### Solution to the second problem
 
-```javascript
-{
+The assumption was that this table can be modified and our solution must be flexible enough so that changing the contents of the table does not cause problems with generating the table of contents.
+
+
+This array contains objects with relevant data:
+````js
     id: 1,
     parentId: null,
     text: 'Zastosowanie',
     link: '#Zastosowanie',
+````
+
+where:
+
+* **id** – unique identifier of each item
+* **parentId** – parent id or null; this element determines whether our object is a child (has parentId set) or a parent (then parentId is null)
+* **text** – text content for the element `<a>`
+* **link** – the content for the href attribute in `<a>`
+
+The table of contents should look like this:
+
+![](./assets/img/example2.png)
+
+ The solution I chose was that in the first step, I only generate items that are at the first level of nesting. I decided to use a for loop and an if condition inside iteration for this. I check if parentId is null. If so, I create the appropriate content and add the id of the item to dataset.id - to know later what the id of that item is.
+
+ ````js
+const section = document.querySelector('.article__list');
+
+const ul = document.createElement('ul');
+
+for(let i=0; i<list.length; i++) {
+
+    if( list[i].parentId === null ) {
+
+        const li = document.createElement('li');
+        li.dataset.id = list[i].id;
+
+        const a = document.createElement('a')
+        a.setAttribute('href' , list[i].link)
+        a.textContent = list[i].text
+
+        li.appendChild(a);
+        ul.appendChild(li);
+    }
 }
-```
+section.appendChild(ul);
+ ````
 
-gdzie:
-* **id** - unikalny identyfikator każdego elementu
-* **parentId** - id rodzica lub `null`, ten element oznacza czy nasz obiekt jest dzieckiem (posiada ustawiony parentId) lub jest rodzicem
-* **text** - zawartość text dla elementu `<a/>`
-* **link** - zawatość dla atrybutu `href` w `</a>`
+In the second step, I use the generated items and reuse the loop to refer to each item separately. Inside this loop I get the element id, then in the list table I look for all objects that have a parent id equal to the given id.
 
-Na podstawie tych danych musimy wygenerowac taki kod html:
+````js
 
-```html
-<ul>
-    <li data-id="1">
-        <a href="#Zastosowanie">Zastosowanie</a>
-        </li>
-    <li data-id="44">
-        <a href="#Historia">Historia</a>
-        <ul>
-            <li><a href="#Dialekty">Dialekty</a></li>
-            <li><a href="#Java">Java</a></li>
-        </ul>
-    </li>
-    <li data-id="24">
-        <a href="#JavaScript_dla_WWW">JavaScript dla WWW</a>
-        <ul>
-            <li><a href="#Interakcja">Interakcja</a></li>
-            <li><a href="#Osadzanie">Osadzanie</a></li>
-        </ul>
-    </li>
-    <li data-id="6">
-        <a href="Linki zewnętrzne">Przypisy</a>
-    </li>
-</ul>
-```
+const liList = document.querySelectorAll('li');
 
-i wstawić go do elementu `.article__list`.
+liList.forEach( function(element) {
 
-Głównym problemem jest tutaj różny poziom zagnieżdzenia tych elementów. Moglibyśmy rozróżnić dwa poziomu.
+    const id = Number(element.dataset.id);
 
-Pierwszy to ten, który dotyczy elementów o właściwości `.parentId` równej `null`.
+    const children = list.filter( function (element) {
+        return element.parentId === id
+    });
 
-Drugi poziom te elementy, które posiadają rodziców.
+    for(let i=0; i<children.length; i++) {
 
-#### Propozycja rozwiązania
+            const ul = document.createElement('ul');
+            const li = document.createElement('li');
+            const a = document.createElement('a');
 
-> Ten problem jest na tyle złożony, że możnaby go było rozwiązać na wiele sposóbów. Ja zaproponuję jeden z nich, ale to nie oznacza, że nie można zrobić tego inaczej (i lepiej!).
+            a.setAttribute('href' , children[i].link);
+            a.textContent = children[i].text;
 
-Początkowo wygenerowałbym tylko elementy, które są na 1 poziomie zagnieżdzenia. Tutaj mogłbym wykorzystać `.forEach` lub pętle `for` oraz `if-a` wew. iteracji. Sprawdzałbym tylko czy `parentId` jest równe `null`.
+            li.appendChild(a);
+            ul.appendChild(li);
+            element.appendChild(ul);
+    }
+})
+````
 
-Jeśli tak to tworzę odpowiednią zawartość, a do `dataset.id` dopisuję jego id. Po to, aby potem wiedzieć, jaki ten element ma identyfikator. 
+### Links:
 
-Wygenerowany kod powinien wyglądać mniej więcej tak:
+- Code: [See my code]()
+- Live: [Check it out]()
 
-```html
-<li data-id="44"><a href="#Historia">Historia</a></li>
-```
+## My Process
 
-Następnie wyszukałbym wszystkie `li` znajdujące się w odpowiedniej sekcji i znów bym wykorzystał pętlę, aby odnieść sie do każdego elementu z osobna.
+### Built with
 
-Wew. tej pętli mogę pobrać `id` tego elementu np. po przez `const id = Number(item.dataset.id)`.
+- HTML
+- CSS
+- JavaScript
 
-Następnie wyszukuję wszystkie elementy z tablicy `list`, które posiadają `parentId` równy pobranemu `id`.
 
-Mógłbym to zrobic za pomocą [`.filter()`](https://developer.mozilla.org/pl/docs/Web/JavaScript/Referencje/Obiekty/Array/filter) na tablicy.
+### What I learned
 
-```javascript
-const children = list.filter(function(element) {
-    return element.parentId === id
-});
-```
+Working with this project allowed me to acquire knowledge in the field of: searching for elements, operations on elements, managing elements and navigating the DOM.
 
-Dzięki temu rozwiązaniu wiem, jakie elementy musze utworzyć dla tego zagnieżdzenia (pamiętaj, że może ich nie być w ogóle). Znów piszę kod, który tworzy mi `ul` oraz pętle dla `li`.
+## Author
 
-Efekt działania naszego kodu powinien być taki jak zakomentowany kod HTML w odpowiedniej sekcji.
+- Github - [Kajetan Kisielewski](https://github.com/KajetanKisielewski)
+- LinkedIn - [Kajetan Kisielewski](https://www.linkedin.com/in/kajetan-kisielewski-157b60208/)
 
-Efekt wizualny powinien być miej więcej taki:
+## Special thanks
 
-![](assets/img/example2.png)
-
-Po kliknięciu w element listy powinieneś zostać przekierowany do odpowiedniego nagłówka w treści strony. 
-
-Płynne przejscie jest zrealizowane przez CSS! Zobacz reguły CSS przypisane do znacznika `html`.
+Thanks to my [Mentor - devmentor.pl](https://devmentor.pl/) - for providing me with this task and for code review.
 
 
 

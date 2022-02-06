@@ -46,7 +46,6 @@ const list = [
 
 
 const section = document.querySelector('.article__list');
-console.log(section);
 
 const ul = document.createElement('ul');
 
