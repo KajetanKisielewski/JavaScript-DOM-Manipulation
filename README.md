@@ -15,6 +15,8 @@
 
 ## Overview
 
+![](./assets/img/Animation.gif)
+
 ### The challenge
 
 This project was created to prove my skills in JavaScript DOM manipulation.
