@@ -148,8 +148,8 @@ liList.forEach( function(element) {
 
 ### Links:
 
-- Code: [See my code]()
-- Live: [Check it out]()
+- Code: [See my code](https://github.com/KajetanKisielewski/JavaScript-DOM-Manipulation)
+- Live: [Check it out](https://kajetankisielewski.github.io/JavaScript-DOM-Manipulation/)
 
 ## My Process
 
